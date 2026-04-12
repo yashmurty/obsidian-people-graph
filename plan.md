@@ -2,7 +2,7 @@
 
 ## What We're Building
 
-A custom Obsidian plugin that renders a **visual force-directed graph of people** in your vault — with face photos on nodes, closeness-based positioning, and company-based clustering. Think of it as your personal network map, living inside Obsidian.
+A custom Obsidian plugin that renders a **visual force-directed graph of people and friends** in your vault — with face photos on nodes, closeness-based positioning, and company-based clustering. Think of it as your personal network map, living inside Obsidian.
 
 ---
 
@@ -171,10 +171,13 @@ Max people (free tier): 20
 ## Monetization
 
 ### Free Tier
-- Up to 20 person nodes
-- All core features
+- All person nodes visible on graph
+- First 20 nodes fully interactive
+- Nodes beyond 20 are dimmed (opacity 0.3) with a lock overlay
+- Clicking a locked node shows upgrade prompt
+- All core features available within 20 node limit
 
-### Pro Tier (~$9/mo or $79/yr)
+### Pro Tier (~$5/mo or $49/yr)
 - Unlimited people
 - Export graph as PNG/SVG
 - Filter view by tag or company

@@ -1,0 +1,9 @@
+{
+	"id": "obsidian-people-graph",
+	"name": "People Graph",
+	"version": "0.1.0",
+	"minAppVersion": "1.0.0",
+	"description": "A visual force-directed graph of people and friends in your vault with photo nodes, closeness-based positioning, and company clustering.",
+	"author": "yashmurty",
+	"isDesktopOnly": false
+}
