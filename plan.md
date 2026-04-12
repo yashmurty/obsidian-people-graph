@@ -47,7 +47,7 @@ knows:
 | `photo` | string | No | Vault-relative path to photo file |
 | `company` | string | No | Used for clustering nodes |
 | `role` | string | No | Shown on hover tooltip |
-| `closeness` | number 1–10 | Yes | 10 = closest to center, 1 = furthest |
+| `closeness` | number 1–10 | No | 10 = closest to center, 1 = furthest (defaults to 5) |
 | `knows` | wikilink array | No | Edges drawn between these people |
 | `tags` | string array | No | For filtering in future versions |
 
@@ -126,7 +126,7 @@ Each node is an SVG `<g>` group containing:
 </clipPath>
 <image href="{photoUrl}" clip-path="url(#clip-{id})" width="60" height="60" />
 <circle r="30" stroke="{color}" fill="none" />       ← ring color by closeness
-<text>{initials}</text>                               ← shown if no photo
+<image href="{defaultAvatarSvg}" />                  ← shown if no photo (default avatar)
 ```
 
 Ring color scale:
@@ -191,14 +191,22 @@ Use a license key system. On plugin load, check key against a simple validation 
 
 ## Build Phases
 
-### Phase 1 — Foundation (Week 1–2)
-- [ ] Init repo from obsidian-sample-plugin boilerplate
-- [ ] Set up esbuild, TypeScript config
+### Phase 0 — Project Scaffolding
+- [x] Init repo with git
+- [x] Create `manifest.json` for Obsidian plugin registration
+- [x] Create `package.json` with dependencies (obsidian, esbuild, typescript)
+- [x] Set up `tsconfig.json` and `esbuild.config.mjs`
+- [x] Create `src/types.ts` with `PersonNode` interface and `PeopleGraphSettings`
+- [x] Create `src/main.ts` — plugin entry point with ribbon icon + command
+- [x] Create `src/graph/GraphView.ts` — basic `ItemView` with placeholder content
+- [x] Verify TypeScript compiles and esbuild produces `main.js`
+- [x] Plugin loads in Obsidian and shows up in Community Plugins
+
+### Phase 1 — Foundation
 - [ ] Build `indexer.ts` — scan vault, parse frontmatter, return `PersonNode[]`
-- [ ] Register a basic `ItemView` that opens as a sidebar/tab
 - [ ] Render plain D3 circles (no photos yet) with force simulation
 
-### Phase 2 — Core Graph (Week 3–4)
+### Phase 2 — Core Graph
 - [ ] Add photo rendering with circular clip
 - [ ] Implement closeness force (distance from center)
 - [ ] Implement cluster force (group by company)
@@ -206,15 +214,15 @@ Use a license key system. On plugin load, check key against a simple validation 
 - [ ] Click to open note
 - [ ] Hover tooltip
 
-### Phase 3 — Polish (Week 5–6)
-- [ ] Fallback initials when no photo
+### Phase 3 — Polish
+- [ ] Fallback default avatar silhouette when no photo
 - [ ] Ring color by closeness score
 - [ ] Zoom and pan
 - [ ] Settings panel
 - [ ] Free tier limit (20 nodes)
 - [ ] Basic error handling (missing photos, broken links)
 
-### Phase 4 — Monetization & Launch (Week 7–8)
+### Phase 4 — Monetization & Launch
 - [ ] License key validation
 - [ ] Export graph as PNG
 - [ ] Write README with screenshots
