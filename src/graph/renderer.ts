@@ -20,13 +20,13 @@ function appendAvatarSilhouette(el: d3.Selection<any, any, any, any>) {
 	el.append("circle")
 		.attr("cy", -4)
 		.attr("r", 8)
-		.attr("fill", "var(--text-muted)");
+		.attr("fill", "#a0a0a0");
 	// Body
 	el.append("ellipse")
 		.attr("cy", 16)
 		.attr("rx", 12)
 		.attr("ry", 9)
-		.attr("fill", "var(--text-muted)");
+		.attr("fill", "#a0a0a0");
 }
 
 function closenessColor(closeness: number): string {
@@ -64,9 +64,14 @@ export function renderGraph(
 	const centerX = width / 2;
 	const centerY = height / 2;
 
-	// Center "You" node — pinned at center, not clickable
+	// Find the "self" person note, or create a generic center node
+	const selfPerson = people.find((p) => p.isSelf);
+	const otherPeople = selfPerson ? people.filter((p) => p !== selfPerson) : people;
+
 	const centerNode: SimNode = {
-		person: {
+		person: selfPerson
+			? { ...selfPerson, name: `${selfPerson.name} (You)` }
+			: {
 			id: "__center__",
 			name: settings.centerLabel,
 			closeness: 10,
@@ -82,7 +87,7 @@ export function renderGraph(
 
 	// Build nodes
 	const nodeMap = new Map<string, SimNode>();
-	const nodes: SimNode[] = [centerNode, ...people.map((p) => {
+	const nodes: SimNode[] = [centerNode, ...otherPeople.map((p) => {
 		const node: SimNode = { person: p };
 		nodeMap.set(p.id, node);
 		const noteName = p.id.replace(/\.md$/, "").split("/").pop()!;
@@ -165,7 +170,7 @@ export function renderGraph(
 		.selectAll("line")
 		.data(links)
 		.join("line")
-		.attr("stroke", "var(--text-faint)")
+		.attr("stroke", "#cccccc")
 		.attr("stroke-opacity", settings.edgeOpacity)
 		.attr("stroke-width", 1.5);
 
@@ -214,30 +219,60 @@ export function renderGraph(
 		const el = d3.select(this);
 
 		if (d.isCenter) {
-			// Center "You" node — distinct style
-			el.append("circle")
-				.attr("r", NODE_RADIUS + 4)
-				.attr("fill", "var(--interactive-accent)")
-				.attr("opacity", 0.9);
+			const centerR = NODE_RADIUS + 4;
+			if (d.person.photoDataUri) {
+				// Center node with photo
+				defs.append("clipPath")
+					.attr("id", "clip-center")
+					.append("circle")
+					.attr("r", centerR);
+				el.append("circle")
+					.attr("r", centerR)
+					.attr("fill", "#e0e0e0");
+				el.append("image")
+					.attr("href", d.person.photoDataUri)
+					.attr("x", -centerR)
+					.attr("y", -centerR)
+					.attr("width", centerR * 2)
+					.attr("height", centerR * 2)
+					.attr("clip-path", "url(#clip-center)")
+					.attr("preserveAspectRatio", "xMidYMid slice");
+				el.append("circle")
+					.attr("r", centerR)
+					.attr("fill", "none")
+					.attr("stroke", "#7b6cd9")
+					.attr("stroke-width", 3);
+			} else {
+				// Generic center node with silhouette
+				el.append("circle")
+					.attr("r", centerR)
+					.attr("fill", "#e0e0e0");
+				appendAvatarSilhouette(el);
+				el.append("circle")
+					.attr("r", centerR)
+					.attr("fill", "none")
+					.attr("stroke", "#7b6cd9")
+					.attr("stroke-width", 3);
+			}
+			// Name label below
 			el.append("text")
 				.text(d.person.name)
 				.attr("text-anchor", "middle")
-				.attr("dy", 5)
-				.attr("font-size", "13px")
+				.attr("dy", centerR + 14)
+				.attr("font-size", "12px")
 				.attr("font-weight", "bold")
-				.attr("fill", "var(--text-on-accent)");
+				.attr("fill", "#333333");
 			return;
 		}
 
 		// Hit area — ensures the entire circle is clickable/hoverable
 		el.append("circle")
 			.attr("r", NODE_RADIUS)
-			.attr("fill", "var(--background-secondary)");
+			.attr("fill", "#e0e0e0");
 
-		if (d.person.photo) {
-			const resourcePath = app.vault.adapter.getResourcePath(d.person.photo);
+		if (d.person.photoDataUri) {
 			const img = el.append("image")
-				.attr("href", resourcePath)
+				.attr("href", d.person.photoDataUri)
 				.attr("x", -NODE_RADIUS)
 				.attr("y", -NODE_RADIUS)
 				.attr("width", NODE_RADIUS * 2)
@@ -258,14 +293,16 @@ export function renderGraph(
 		el.append("circle")
 			.attr("r", NODE_RADIUS)
 			.attr("fill", "none")
-			.attr("stroke", settings.showClosenessRing ? closenessColor(d.person.closeness) : "var(--text-muted)")
+			.attr("stroke", settings.showClosenessRing ? closenessColor(d.person.closeness) : "#999999")
 			.attr("stroke-width", 2.5);
 	});
 
-	// Label (skip center — it has its own)
+	// Labels (skip center — it has its own)
 	let labelIndex = 0;
-	nodeSelection
-		.filter((d) => !d.isCenter)
+	const nonCenterNodes = nodeSelection.filter((d) => !d.isCenter);
+
+	// Name
+	nonCenterNodes
 		.append("text")
 		.text((d) => {
 			const i = labelIndex++;
@@ -274,7 +311,21 @@ export function renderGraph(
 		.attr("text-anchor", "middle")
 		.attr("dy", NODE_RADIUS + 14)
 		.attr("font-size", "11px")
-		.attr("fill", "var(--text-normal)");
+		.attr("fill", "#333333");
+
+	// Company
+	let companyIndex = 0;
+	nonCenterNodes
+		.filter((d) => !!(d.person.company))
+		.append("text")
+		.text((d) => {
+			const i = companyIndex++;
+			return i >= maxFree ? "" : d.person.company!;
+		})
+		.attr("text-anchor", "middle")
+		.attr("dy", NODE_RADIUS + 27)
+		.attr("font-size", "9px")
+		.attr("fill", "#888888");
 
 	// Tooltip
 	const tooltip = d3
@@ -283,8 +334,8 @@ export function renderGraph(
 		.attr("class", "people-graph-tooltip")
 		.style("position", "absolute")
 		.style("display", "none")
-		.style("background", "var(--background-primary)")
-		.style("border", "1px solid var(--background-modifier-border)")
+		.style("background", "#ffffff")
+		.style("border", "1px solid #e0e0e0")
 		.style("border-radius", "6px")
 		.style("padding", "8px 12px")
 		.style("font-size", "12px")

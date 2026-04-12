@@ -1,7 +1,8 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import type PeopleGraphPlugin from "../main";
 import { indexPeople } from "../indexer";
 import { renderGraph } from "./renderer";
+import { exportGraphAsPng } from "./export";
 
 export const VIEW_TYPE_PEOPLE_GRAPH = "people-graph-view";
 
@@ -28,6 +29,23 @@ export class PeopleGraphView extends ItemView {
 	async onOpen() {
 		this.render();
 
+		// Export button in view header
+		this.addAction("download", "Export as PNG", async () => {
+			const container = this.containerEl.children[1] as HTMLElement;
+			const blob = await exportGraphAsPng(container);
+			if (!blob) {
+				new Notice("Export failed — no graph to export.");
+				return;
+			}
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "people-graph.png";
+			a.click();
+			URL.revokeObjectURL(url);
+			new Notice("Graph exported as PNG.");
+		});
+
 		// Re-render when a note's frontmatter changes
 		this.registerEvent(
 			this.app.metadataCache.on("changed", () => {
@@ -36,9 +54,9 @@ export class PeopleGraphView extends ItemView {
 		);
 	}
 
-	render() {
+	async render() {
 		const container = this.containerEl.children[1] as HTMLElement;
-		const people = indexPeople(this.app, this.plugin.settings);
+		const people = await indexPeople(this.app, this.plugin.settings);
 		renderGraph(container, people, this.plugin.settings, this.app);
 	}
 

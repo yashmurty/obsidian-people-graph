@@ -1,9 +1,9 @@
-import { App } from "obsidian";
+import { App, TFile } from "obsidian";
 import { PersonNode, PeopleGraphSettings } from "./types";
 
 const DEFAULT_CLOSENESS = 5;
 
-export function indexPeople(app: App, settings: PeopleGraphSettings): PersonNode[] {
+export async function indexPeople(app: App, settings: PeopleGraphSettings): Promise<PersonNode[]> {
 	const people: PersonNode[] = [];
 	const files = app.vault.getMarkdownFiles();
 
@@ -32,15 +32,25 @@ export function indexPeople(app: App, settings: PeopleGraphSettings): PersonNode
 
 		const knows = parseKnows(fm.knows);
 
+		const photoPath = fm[settings.photoField]
+			? resolvePhotoPath(app, stripWikilink(String(fm[settings.photoField])), file.path)
+			: undefined;
+
+		const photoDataUri = photoPath
+			? await readPhotoAsDataUri(app, photoPath)
+			: undefined;
+
 		const person: PersonNode = {
 			id: file.path,
 			name: String(name),
-			photo: fm[settings.photoField] ? resolvePhotoPath(app, stripWikilink(String(fm[settings.photoField])), file.path) : undefined,
-			company: fm.company ? String(fm.company) : undefined,
-			role: fm.role ? String(fm.role) : undefined,
+			photo: photoPath,
+			photoDataUri,
+			company: fm.company ? stripWikilink(String(fm.company)) : undefined,
+			role: fm.role ? stripWikilink(String(fm.role)) : undefined,
 			closeness,
 			tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
 			knows,
+			isSelf: fm.is_self === true,
 		};
 
 		people.push(person);
@@ -58,13 +68,39 @@ function matchesPersonFilter(fm: Record<string, unknown>, field: string, value: 
 }
 
 function resolvePhotoPath(app: App, photoName: string, sourcePath: string): string {
-	// If it's already a full path that exists, use it
 	const existing = app.vault.getAbstractFileByPath(photoName);
 	if (existing) return photoName;
 
-	// Resolve like a wikilink — searches the whole vault by filename
 	const resolved = app.metadataCache.getFirstLinkpathDest(photoName, sourcePath);
 	return resolved ? resolved.path : photoName;
+}
+
+async function readPhotoAsDataUri(app: App, photoPath: string): Promise<string | undefined> {
+	const file = app.vault.getAbstractFileByPath(photoPath);
+	if (!(file instanceof TFile)) return undefined;
+
+	try {
+		const binary = await app.vault.readBinary(file);
+		const ext = file.extension.toLowerCase();
+		const mime = ext === "png" ? "image/png"
+			: ext === "jpg" || ext === "jpeg" ? "image/jpeg"
+			: ext === "gif" ? "image/gif"
+			: ext === "webp" ? "image/webp"
+			: "image/png";
+		const base64 = arrayBufferToBase64(binary);
+		return `data:${mime};base64,${base64}`;
+	} catch {
+		return undefined;
+	}
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+	const bytes = new Uint8Array(buffer);
+	let binary = "";
+	for (let i = 0; i < bytes.byteLength; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return btoa(binary);
 }
 
 function stripWikilink(str: string): string {
@@ -81,7 +117,6 @@ function parseKnows(raw: unknown): string[] {
 
 	return entries
 		.map((str) => {
-			// Strip wikilink brackets: "[[Jane Doe]]" → "Jane Doe"
 			const match = str.match(/^\[\[(.+?)(?:\|.+?)?\]\]$/);
 			return match ? match[1] : str;
 		})
