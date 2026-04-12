@@ -12,6 +12,8 @@ export interface PersonNode {
 export interface PeopleGraphSettings {
 	personField: string;
 	personValue: string;
+	excludePaths: string;
+	photoField: string;
 	enableClustering: boolean;
 	clusterStrength: number;
 	showEdges: boolean;
@@ -24,6 +26,8 @@ export interface PeopleGraphSettings {
 export const DEFAULT_SETTINGS: PeopleGraphSettings = {
 	personField: "type",
 	personValue: "person",
+	excludePaths: "Templates",
+	photoField: "photo",
 	enableClustering: true,
 	clusterStrength: 0.3,
 	showEdges: true,

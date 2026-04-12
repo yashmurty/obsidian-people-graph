@@ -28,9 +28,9 @@ export class PeopleGraphView extends ItemView {
 	async onOpen() {
 		this.render();
 
-		// Re-render when vault changes
+		// Re-render when a note's frontmatter changes
 		this.registerEvent(
-			this.app.metadataCache.on("resolved", () => {
+			this.app.metadataCache.on("changed", () => {
 				this.render();
 			}),
 		);

@@ -1,6 +1,7 @@
 import { Plugin, WorkspaceLeaf } from "obsidian";
 import { PeopleGraphSettings, DEFAULT_SETTINGS } from "./types";
 import { PeopleGraphView, VIEW_TYPE_PEOPLE_GRAPH } from "./graph/GraphView";
+import { PeopleGraphSettingTab } from "./settings";
 
 export default class PeopleGraphPlugin extends Plugin {
 	settings: PeopleGraphSettings = DEFAULT_SETTINGS;
@@ -16,6 +17,8 @@ export default class PeopleGraphPlugin extends Plugin {
 		this.addRibbonIcon("users", "Open People Graph", () => {
 			this.activateView();
 		});
+
+		this.addSettingTab(new PeopleGraphSettingTab(this.app, this));
 
 		this.addCommand({
 			id: "open-people-graph",

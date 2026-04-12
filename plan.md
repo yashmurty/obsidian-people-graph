@@ -219,11 +219,17 @@ Use a license key system. On plugin load, check key against a simple validation 
 - [x] Default avatar silhouette when no photo
 
 ### Phase 3 — Polish
-- [ ] Ring color by closeness score
-- [ ] Zoom and pan
-- [ ] Settings panel
-- [ ] Free tier limit (20 nodes)
-- [ ] Basic error handling (missing photos, broken links)
+- [x] Ring color by closeness score (green/orange/gray, toggleable)
+- [x] Zoom and pan (scroll zoom, drag pan, double-click reset)
+- [x] Responsive SVG sizing (fills container)
+- [x] Settings panel (person detection, clustering, edges, closeness ring, exclude paths)
+- [x] Free tier limit (20 nodes, dimmed + upgrade notice)
+- [x] Error handling (broken photo falls back to avatar silhouette)
+- [x] Center "You" node (pinned, not clickable, accent-colored)
+- [x] Closeness string parsing (handles `"10"` as well as `10`)
+- [x] Exclude paths setting (skip Templates, Archive, etc.)
+- [x] Increased collision radius to prevent label overlap
+- [x] Live re-render on frontmatter edits
 
 ### Phase 4 — Monetization & Launch
 - [ ] License key validation
