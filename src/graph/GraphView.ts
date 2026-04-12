@@ -39,7 +39,7 @@ export class PeopleGraphView extends ItemView {
 	render() {
 		const container = this.containerEl.children[1] as HTMLElement;
 		const people = indexPeople(this.app, this.plugin.settings);
-		renderGraph(container, people, this.plugin.settings);
+		renderGraph(container, people, this.plugin.settings, this.app);
 	}
 
 	async onClose() {

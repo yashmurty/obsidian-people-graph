@@ -210,15 +210,15 @@ Use a license key system. On plugin load, check key against a simple validation 
 - [x] Wire up GraphView with live re-render on vault changes
 
 ### Phase 2 — Core Graph
-- [ ] Add photo rendering with circular clip
-- [ ] Implement closeness force (distance from center)
-- [ ] Implement cluster force (group by company)
-- [ ] Draw edges from `knows` field
-- [ ] Click to open note
-- [ ] Hover tooltip
+- [x] Add photo rendering with circular clip
+- [x] Implement closeness force (distance from center)
+- [x] Implement cluster force (group by company)
+- [x] Draw edges from `knows` field (done in Phase 1)
+- [x] Click to open note
+- [x] Hover tooltip (name, company, role, closeness)
+- [x] Default avatar silhouette when no photo
 
 ### Phase 3 — Polish
-- [ ] Fallback default avatar silhouette when no photo
 - [ ] Ring color by closeness score
 - [ ] Zoom and pan
 - [ ] Settings panel
