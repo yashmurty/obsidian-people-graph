@@ -2,6 +2,8 @@
 
 A visual force-directed graph of people and friends in your vault. See your personal network as an interactive map with photo nodes, closeness-based positioning, and company clustering.
 
+![People Graph](Obisidian-People-Graph.png)
+
 ## Features
 
 - **Force-directed graph** — people are rendered as circular nodes connected by relationship edges
