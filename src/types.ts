@@ -10,6 +10,8 @@ export interface PersonNode {
 }
 
 export interface PeopleGraphSettings {
+	personField: string;
+	personValue: string;
 	enableClustering: boolean;
 	clusterStrength: number;
 	showEdges: boolean;
@@ -20,6 +22,8 @@ export interface PeopleGraphSettings {
 }
 
 export const DEFAULT_SETTINGS: PeopleGraphSettings = {
+	personField: "type",
+	personValue: "person",
 	enableClustering: true,
 	clusterStrength: 0.3,
 	showEdges: true,

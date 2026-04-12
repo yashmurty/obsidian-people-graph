@@ -203,8 +203,11 @@ Use a license key system. On plugin load, check key against a simple validation 
 - [x] Plugin loads in Obsidian and shows up in Community Plugins
 
 ### Phase 1 — Foundation
-- [ ] Build `indexer.ts` — scan vault, parse frontmatter, return `PersonNode[]`
-- [ ] Render plain D3 circles (no photos yet) with force simulation
+- [x] Build `indexer.ts` — scan vault, parse frontmatter, return `PersonNode[]`
+- [x] Configurable person detection (`personField` / `personValue` settings)
+- [x] Fallback to filename when `name` not in frontmatter
+- [x] Render plain D3 circles with D3 force simulation
+- [x] Wire up GraphView with live re-render on vault changes
 
 ### Phase 2 — Core Graph
 - [ ] Add photo rendering with circular clip

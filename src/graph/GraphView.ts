@@ -1,5 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import type PeopleGraphPlugin from "../main";
+import { indexPeople } from "../indexer";
+import { renderGraph } from "./renderer";
 
 export const VIEW_TYPE_PEOPLE_GRAPH = "people-graph-view";
 
@@ -24,15 +26,24 @@ export class PeopleGraphView extends ItemView {
 	}
 
 	async onOpen() {
-		const container = this.containerEl.children[1];
-		container.empty();
-		container.createEl("h4", { text: "People Graph" });
-		container.createEl("p", {
-			text: "Graph view will render here. Indexing person notes from vault...",
-		});
+		this.render();
+
+		// Re-render when vault changes
+		this.registerEvent(
+			this.app.metadataCache.on("resolved", () => {
+				this.render();
+			}),
+		);
+	}
+
+	render() {
+		const container = this.containerEl.children[1] as HTMLElement;
+		const people = indexPeople(this.app, this.plugin.settings);
+		renderGraph(container, people, this.plugin.settings);
 	}
 
 	async onClose() {
-		// cleanup will go here
+		const container = this.containerEl.children[1] as HTMLElement;
+		container.empty();
 	}
 }
