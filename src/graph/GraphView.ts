@@ -60,6 +60,7 @@ export class PeopleGraphView extends ItemView {
 		renderGraph(container, people, this.plugin.settings, this.app);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/require-await -- Obsidian API requires async signature
 	async onClose(): Promise<void> {
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();

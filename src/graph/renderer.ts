@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import { Notice } from "obsidian";
-import type { App, TFile } from "obsidian";
+import { Notice, TFile } from "obsidian";
+import type { App } from "obsidian";
 import type { PersonNode, PeopleGraphSettings } from "../types";
 
 interface SimNode extends d3.SimulationNodeDatum {
@@ -15,8 +15,8 @@ interface SimLink extends d3.SimulationLinkDatum<SimNode> {
 
 const NODE_RADIUS = 24;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function appendAvatarSilhouette(el: d3.Selection<SVGGElement, any, any, any>) {
+function appendAvatarSilhouette(parent: SVGGElement) {
+	const el = d3.select(parent);
 	// Head
 	el.append("circle")
 		.attr("cy", -4)
@@ -149,7 +149,7 @@ export function renderGraph(
 
 	// Double-click to reset zoom
 	svg.on("dblclick.zoom", () => {
-		svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+		void svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
 	});
 
 	// Defs for clip paths
@@ -248,7 +248,7 @@ export function renderGraph(
 				el.append("circle")
 					.attr("r", centerR)
 					.attr("fill", "#e0e0e0");
-				appendAvatarSilhouette(el);
+				if (nodeElements[i]) appendAvatarSilhouette(nodeElements[i]);
 				el.append("circle")
 					.attr("r", centerR)
 					.attr("fill", "none")
@@ -284,10 +284,10 @@ export function renderGraph(
 			// On image load failure, replace with avatar silhouette
 			(img.node() as SVGImageElement).addEventListener("error", () => {
 				img.remove();
-				appendAvatarSilhouette(el);
+				if (nodeElements[i]) appendAvatarSilhouette(nodeElements[i]);
 			});
 		} else {
-			appendAvatarSilhouette(el);
+			if (nodeElements[i]) appendAvatarSilhouette(nodeElements[i]);
 		}
 
 		// Outer ring — color by closeness
@@ -371,8 +371,8 @@ export function renderGraph(
 			return;
 		}
 		const file = app.vault.getAbstractFileByPath(d.person.id);
-		if (file) {
-			void app.workspace.getLeaf("tab").openFile(file as TFile);
+		if (file instanceof TFile) {
+			void app.workspace.getLeaf("tab").openFile(file);
 		}
 	});
 

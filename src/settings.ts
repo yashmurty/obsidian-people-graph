@@ -60,7 +60,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 			.setDesc("Comma-separated folder or file paths to exclude (e.g. \"Templates, Archive\")")
 			.addText((text) =>
 				text
-					.setPlaceholder("Templates")
+					.setPlaceholder("templates")
 					.setValue(this.plugin.settings.excludePaths)
 					.onChange(async (value) => {
 						this.plugin.settings.excludePaths = value;
