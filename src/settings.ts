@@ -18,7 +18,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Frontmatter field")
-			.setDesc("The frontmatter field to identify person notes (e.g. \"type\" or \"tags\")")
+			.setDesc("Frontmatter field to identify person notes (e.g. \"type\" or \"tags\")")
 			.addText((text) =>
 				text
 					.setPlaceholder("type")
@@ -31,7 +31,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Field value")
-			.setDesc("The value to match (e.g. \"person\" or \"people\")")
+			.setDesc("Value to match (e.g. \"person\" or \"people\")")
 			.addText((text) =>
 				text
 					.setPlaceholder("person")
@@ -44,7 +44,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Photo field")
-			.setDesc("The frontmatter field that contains the photo path (e.g. \"photo\" or \"avatar\")")
+			.setDesc("Frontmatter field that contains the photo path (e.g. \"photo\" or \"avatar\")")
 			.addText((text) =>
 				text
 					.setPlaceholder("photo")
@@ -57,7 +57,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Exclude paths")
-			.setDesc("Comma-separated folder or file paths to exclude (e.g. \"Templates, Archive\")")
+			.setDesc("Comma-separated folder or file paths to exclude (e.g. \"templates, archive\")")
 			.addText((text) =>
 				text
 					.setPlaceholder("templates")

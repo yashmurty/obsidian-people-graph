@@ -149,7 +149,7 @@ export function renderGraph(
 
 	// Double-click to reset zoom
 	svg.on("dblclick.zoom", () => {
-		void svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+		void zoom.transform(svg.transition().duration(500), d3.zoomIdentity);
 	});
 
 	// Defs for clip paths
