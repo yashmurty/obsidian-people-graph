@@ -14,23 +14,23 @@ export default class PeopleGraphPlugin extends Plugin {
 			(leaf) => new PeopleGraphView(leaf, this)
 		);
 
-		this.addRibbonIcon("users", "Open People Graph", () => {
-			this.activateView();
+		this.addRibbonIcon("users", "Open people graph", () => {
+			void this.activateView();
 		});
 
 		this.addSettingTab(new PeopleGraphSettingTab(this.app, this));
 
 		this.addCommand({
-			id: "open-people-graph",
-			name: "Open People Graph",
+			id: "open",
+			name: "Open graph",
 			callback: () => {
-				this.activateView();
+				void this.activateView();
 			},
 		});
 	}
 
 	onunload() {
-		this.app.workspace.detachLeavesOfType(VIEW_TYPE_PEOPLE_GRAPH);
+		// no-op: don't detach leaves so user layout is preserved
 	}
 
 	async loadSettings() {

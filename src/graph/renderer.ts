@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { Notice } from "obsidian";
-import type { App } from "obsidian";
+import type { App, TFile } from "obsidian";
 import type { PersonNode, PeopleGraphSettings } from "../types";
 
 interface SimNode extends d3.SimulationNodeDatum {
@@ -15,7 +15,8 @@ interface SimLink extends d3.SimulationLinkDatum<SimNode> {
 
 const NODE_RADIUS = 24;
 
-function appendAvatarSilhouette(el: d3.Selection<any, any, any, any>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function appendAvatarSilhouette(el: d3.Selection<SVGGElement, any, any, any>) {
 	// Head
 	el.append("circle")
 		.attr("cy", -4)
@@ -125,8 +126,7 @@ export function renderGraph(
 	}
 
 	// Create SVG — fills container and resizes with it
-	container.style.position = "relative";
-	container.style.overflow = "hidden";
+	container.addClass("people-graph-container");
 
 	const svg = d3
 		.select(container)
@@ -205,18 +205,19 @@ export function renderGraph(
 
 	// Free tier: dim nodes beyond limit (skip center node)
 	const maxFree = settings.maxFreeNodes;
+	const nodeElements = nodeSelection.nodes();
 	let personIndex = 0;
-	nodeSelection.each(function (d) {
+	nodeSelection.each((d, i) => {
 		if (d.isCenter) return;
 		if (personIndex >= maxFree) {
-			d3.select(this).attr("opacity", 0.3);
+			d3.select(nodeElements[i]).attr("opacity", 0.3);
 		}
 		personIndex++;
 	});
 
 	// Render node visuals
-	nodeSelection.each(function (d, i) {
-		const el = d3.select(this);
+	nodeSelection.each((d, i) => {
+		const el = d3.select(nodeElements[i]);
 
 		if (d.isCenter) {
 			const centerR = NODE_RADIUS + 4;
@@ -331,17 +332,7 @@ export function renderGraph(
 	const tooltip = d3
 		.select(container)
 		.append("div")
-		.attr("class", "people-graph-tooltip")
-		.style("position", "absolute")
-		.style("display", "none")
-		.style("background", "#ffffff")
-		.style("border", "1px solid #e0e0e0")
-		.style("border-radius", "6px")
-		.style("padding", "8px 12px")
-		.style("font-size", "12px")
-		.style("pointer-events", "none")
-		.style("z-index", "100")
-		.style("box-shadow", "0 2px 8px rgba(0,0,0,0.15)");
+		.attr("class", "people-graph-tooltip");
 
 	nodeSelection
 		.on("mouseenter", (event, d) => {
@@ -381,7 +372,7 @@ export function renderGraph(
 		}
 		const file = app.vault.getAbstractFileByPath(d.person.id);
 		if (file) {
-			app.workspace.getLeaf("tab").openFile(file as any);
+			void app.workspace.getLeaf("tab").openFile(file as TFile);
 		}
 	});
 

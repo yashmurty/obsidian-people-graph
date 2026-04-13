@@ -19,15 +19,15 @@ export class PeopleGraphView extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return "People Graph";
+		return "People graph";
 	}
 
 	getIcon(): string {
 		return "users";
 	}
 
-	async onOpen() {
-		this.render();
+	async onOpen(): Promise<void> {
+		await this.render();
 
 		// Export button in view header
 		this.addAction("download", "Export as PNG", async () => {
@@ -49,18 +49,18 @@ export class PeopleGraphView extends ItemView {
 		// Re-render when a note's frontmatter changes
 		this.registerEvent(
 			this.app.metadataCache.on("changed", () => {
-				this.render();
+				void this.render();
 			}),
 		);
 	}
 
-	async render() {
+	async render(): Promise<void> {
 		const container = this.containerEl.children[1] as HTMLElement;
 		const people = await indexPeople(this.app, this.plugin.settings);
 		renderGraph(container, people, this.plugin.settings, this.app);
 	}
 
-	async onClose() {
+	async onClose(): Promise<void> {
 		const container = this.containerEl.children[1] as HTMLElement;
 		container.empty();
 	}

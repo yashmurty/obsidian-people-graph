@@ -13,12 +13,10 @@ export async function exportGraphAsPng(container: HTMLElement): Promise<Blob | n
 	clone.setAttribute("height", String(height));
 	clone.setAttribute("viewBox", svgEl.getAttribute("viewBox") ?? `0 0 ${bbox.width} ${bbox.height}`);
 
-	// Inline computed styles so they survive serialization
-	const styles = document.createElement("style");
-	styles.textContent = `
-		text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-	`;
-	clone.prepend(styles);
+	// Set font-family directly on text elements instead of using a style element
+	clone.querySelectorAll("text").forEach((textEl) => {
+		textEl.setAttribute("font-family", "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif");
+	});
 
 	const serializer = new XMLSerializer();
 	const svgString = serializer.serializeToString(clone);
