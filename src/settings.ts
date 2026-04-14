@@ -21,7 +21,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 			.setDesc("Frontmatter field to identify person notes (e.g. \"type\" or \"tags\")")
 			.addText((text) =>
 				text
-					.setPlaceholder("type")
+					.setPlaceholder("Type")
 					.setValue(this.plugin.settings.personField)
 					.onChange(async (value) => {
 						this.plugin.settings.personField = value;
@@ -34,7 +34,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 			.setDesc("Value to match (e.g. \"person\" or \"people\")")
 			.addText((text) =>
 				text
-					.setPlaceholder("person")
+					.setPlaceholder("Person")
 					.setValue(this.plugin.settings.personValue)
 					.onChange(async (value) => {
 						this.plugin.settings.personValue = value;
@@ -47,7 +47,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 			.setDesc("Frontmatter field that contains the photo path (e.g. \"photo\" or \"avatar\")")
 			.addText((text) =>
 				text
-					.setPlaceholder("photo")
+					.setPlaceholder("Photo")
 					.setValue(this.plugin.settings.photoField)
 					.onChange(async (value) => {
 						this.plugin.settings.photoField = value;
@@ -60,7 +60,7 @@ export class PeopleGraphSettingTab extends PluginSettingTab {
 			.setDesc("Comma-separated folder or file paths to exclude (e.g. \"templates, archive\")")
 			.addText((text) =>
 				text
-					.setPlaceholder("templates")
+					.setPlaceholder("Templates")
 					.setValue(this.plugin.settings.excludePaths)
 					.onChange(async (value) => {
 						this.plugin.settings.excludePaths = value;
