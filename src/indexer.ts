@@ -50,7 +50,7 @@ export async function indexPeople(app: App, settings: PeopleGraphSettings): Prom
 			closeness,
 			tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
 			knows,
-			isSelf: fm.is_self === true,
+			isSelf: fm.is_self === true || fm.is_self === "true",
 		};
 
 		people.push(person);

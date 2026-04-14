@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-people-graph",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A visual force-directed graph of people and friends in your vault",
 	"main": "main.js",
 	"scripts": {
