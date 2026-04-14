@@ -55,8 +55,20 @@ tags:
 | `closeness` | number 1-10 | No | Distance from center (default: 5). 10 = closest, 1 = furthest |
 | `knows` | wikilink(s) | No | Edges drawn between these people. Supports array or single value |
 | `tags` | string array | No | For filtering in future versions |
+| `is_self` | boolean | No | Mark this note as "you" — becomes the center node of the graph |
 
 The detection field and value are configurable in settings. For example, you can use `tags: [people]` instead of `type: person`.
+
+To mark one of your person notes as "you" (the center of the graph), add `is_self: true` to its frontmatter:
+
+```yaml
+---
+type: person
+name: Your Name
+is_self: true
+photo: attachments/me.jpg
+---
+```
 
 ### 3. Open the graph
 
