@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Notice, TFile } from "obsidian";
+import { TFile } from "obsidian";
 import type { App } from "obsidian";
 import type { PersonNode, PeopleGraphSettings } from "../types";
 
@@ -47,7 +47,7 @@ export function renderGraph(
 	container.empty();
 
 	if (people.length === 0) {
-		const msg = container.createEl("div", { cls: "people-graph-empty" });
+		const msg = container.createDiv({ cls: "people-graph-empty" });
 		msg.createEl("h4", { text: "No people found" });
 		msg.createEl("p", {
 			text: `Looking for notes where frontmatter field "${settings.personField}" = "${settings.personValue}".`,
@@ -141,8 +141,8 @@ export function renderGraph(
 	const zoom = d3
 		.zoom<SVGSVGElement, unknown>()
 		.scaleExtent([0.2, 5])
-		.on("zoom", (event) => {
-			g.attr("transform", event.transform);
+		.on("zoom", (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+			g.attr("transform", event.transform.toString());
 		});
 
 	svg.call(zoom);
@@ -184,18 +184,18 @@ export function renderGraph(
 		.call(
 			d3
 				.drag<SVGGElement, SimNode>()
-				.on("start", (event, d) => {
+				.on("start", (event: d3.D3DragEvent<SVGGElement, SimNode, SimNode>, d) => {
 					if (d.isCenter) return;
 					if (!event.active) simulation.alphaTarget(0.3).restart();
 					d.fx = d.x;
 					d.fy = d.y;
 				})
-				.on("drag", (event, d) => {
+				.on("drag", (event: d3.D3DragEvent<SVGGElement, SimNode, SimNode>, d) => {
 					if (d.isCenter) return;
 					d.fx = event.x;
 					d.fy = event.y;
 				})
-				.on("end", (event, d) => {
+				.on("end", (event: d3.D3DragEvent<SVGGElement, SimNode, SimNode>, d) => {
 					if (d.isCenter) return;
 					if (!event.active) simulation.alphaTarget(0);
 					d.fx = null;
@@ -203,17 +203,7 @@ export function renderGraph(
 				}),
 		);
 
-	// Free tier: dim nodes beyond limit (skip center node)
-	const maxFree = settings.maxFreeNodes;
 	const nodeElements = nodeSelection.nodes();
-	let personIndex = 0;
-	nodeSelection.each((d, i) => {
-		if (d.isCenter) return;
-		if (personIndex >= maxFree) {
-			d3.select(nodeElements[i]).attr("opacity", 0.3);
-		}
-		personIndex++;
-	});
 
 	// Render node visuals
 	nodeSelection.each((d, i) => {
@@ -299,30 +289,22 @@ export function renderGraph(
 	});
 
 	// Labels (skip center — it has its own)
-	let labelIndex = 0;
 	const nonCenterNodes = nodeSelection.filter((d) => !d.isCenter);
 
 	// Name
 	nonCenterNodes
 		.append("text")
-		.text((d) => {
-			const i = labelIndex++;
-			return i >= maxFree ? "Locked" : d.person.name;
-		})
+		.text((d) => d.person.name)
 		.attr("text-anchor", "middle")
 		.attr("dy", NODE_RADIUS + 14)
 		.attr("font-size", "11px")
 		.attr("fill", "#333333");
 
 	// Company
-	let companyIndex = 0;
 	nonCenterNodes
 		.filter((d) => !!(d.person.company))
 		.append("text")
-		.text((d) => {
-			const i = companyIndex++;
-			return i >= maxFree ? "" : d.person.company!;
-		})
+		.text((d) => d.person.company!)
 		.attr("text-anchor", "middle")
 		.attr("dy", NODE_RADIUS + 27)
 		.attr("font-size", "9px")
@@ -335,22 +317,16 @@ export function renderGraph(
 		.attr("class", "people-graph-tooltip");
 
 	nodeSelection
-		.on("mouseenter", (event, d) => {
+		.on("mouseenter", (_event, d) => {
 			if (d.isCenter) return;
-			const nodeIndex = nodes.indexOf(d) - 1;
-			let lines: string[];
-			if (nodeIndex >= maxFree) {
-				lines = ["Upgrade to Pro to unlock this node"];
-			} else {
-				lines = [d.person.name];
-				if (d.person.company) lines.push(`Company: ${d.person.company}`);
-				if (d.person.role) lines.push(`Role: ${d.person.role}`);
-				lines.push(`Closeness: ${d.person.closeness}/10`);
-			}
+			const lines = [d.person.name];
+			if (d.person.company) lines.push(`Company: ${d.person.company}`);
+			if (d.person.role) lines.push(`Role: ${d.person.role}`);
+			lines.push(`Closeness: ${d.person.closeness}/10`);
 
 			tooltip.html(lines.join("<br>")).style("display", "block");
 		})
-		.on("mousemove", (event) => {
+		.on("mousemove", (event: MouseEvent) => {
 			const rect = container.getBoundingClientRect();
 			tooltip
 				.style("left", `${event.clientX - rect.left + 12}px`)
@@ -360,16 +336,9 @@ export function renderGraph(
 			tooltip.style("display", "none");
 		});
 
-	// Click to open note (or show upgrade prompt for locked nodes)
+	// Click to open the person's note
 	nodeSelection.on("click", (_event, d) => {
 		if (d.isCenter) return;
-		const nodeIndex = nodes.indexOf(d) - 1; // -1 to skip center node
-		if (nodeIndex >= maxFree) {
-			new Notice(
-				`Upgrade to Pro to unlock all people nodes (currently limited to ${maxFree}).`,
-			);
-			return;
-		}
 		const file = app.vault.getAbstractFileByPath(d.person.id);
 		if (file instanceof TFile) {
 			void app.workspace.getLeaf("tab").openFile(file);

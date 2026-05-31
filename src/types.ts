@@ -22,7 +22,6 @@ export interface PeopleGraphSettings {
 	edgeOpacity: number;
 	showClosenessRing: boolean;
 	centerLabel: string;
-	maxFreeNodes: number;
 }
 
 export const DEFAULT_SETTINGS: PeopleGraphSettings = {
@@ -36,5 +35,4 @@ export const DEFAULT_SETTINGS: PeopleGraphSettings = {
 	edgeOpacity: 0.4,
 	showClosenessRing: true,
 	centerLabel: "You",
-	maxFreeNodes: 20,
 };

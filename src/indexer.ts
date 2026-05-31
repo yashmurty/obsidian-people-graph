@@ -20,7 +20,7 @@ export async function indexPeople(app: App, settings: PeopleGraphSettings): Prom
 		const cache = app.metadataCache.getFileCache(file);
 		if (!cache?.frontmatter) continue;
 
-		const fm = cache.frontmatter;
+		const fm = cache.frontmatter as Record<string, unknown>;
 		if (!matchesPersonFilter(fm, settings.personField, settings.personValue)) continue;
 
 		const name = fm.name ?? file.basename;

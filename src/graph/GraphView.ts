@@ -38,8 +38,7 @@ export class PeopleGraphView extends ItemView {
 				return;
 			}
 			const url = URL.createObjectURL(blob);
-			const a = document.createElement("a");
-			a.href = url;
+			const a = createEl("a", { href: url });
 			a.download = "people-graph.png";
 			a.click();
 			URL.revokeObjectURL(url);

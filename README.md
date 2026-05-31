@@ -88,10 +88,11 @@ photo: attachments/me.jpg
 | Edge opacity | Opacity of relationship lines | 0.4 |
 | Show closeness ring | Color node ring by closeness score | On |
 
-## Pro (Coming Soon)
+## Roadmap
 
-- Unlimited people (free tier: 20 interactive nodes)
-- Export graph as PNG/SVG
+Ideas planned for future releases:
+
+- Export graph as SVG (PNG export is already available from the view toolbar)
 - Filter view by tag or company
 - Color themes
 

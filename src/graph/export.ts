@@ -26,7 +26,7 @@ export async function exportGraphAsPng(container: HTMLElement): Promise<Blob | n
 	return new Promise((resolve) => {
 		const img = new Image();
 		img.onload = () => {
-			const canvas = document.createElement("canvas");
+			const canvas = createEl("canvas");
 			canvas.width = width;
 			canvas.height = height;
 			const ctx = canvas.getContext("2d")!;
