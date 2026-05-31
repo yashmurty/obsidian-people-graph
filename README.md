@@ -88,11 +88,15 @@ photo: attachments/me.jpg
 | Edge opacity | Opacity of relationship lines | 0.4 |
 | Show closeness ring | Color node ring by closeness score | On |
 
+## Privacy
+
+To build the graph, this plugin scans your vault's markdown files for notes that match your configured person frontmatter (it reads file paths and frontmatter only). It runs entirely locally and makes **no network requests** — your data never leaves your vault.
+
 ## Roadmap
 
 Ideas planned for future releases:
 
-- Export graph as SVG (PNG export is already available from the view toolbar)
+- Export graph as SVG (PNG export is already av1ailable from the view toolbar)
 - Filter view by tag or company
 - Color themes
 
